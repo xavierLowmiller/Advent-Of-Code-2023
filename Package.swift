@@ -32,7 +32,13 @@ let package = Package(
         .library(name: "Day24", targets: ["Day24"]),
         .library(name: "Day25", targets: ["Day25"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.0.0")),
+    ],
     targets: [
+        .target(name: "AOCAlgorithms", dependencies: [
+            .product(name: "DequeModule", package: "swift-collections"),
+        ]),
         .target(name: "Day1"),
         .target(name: "Day2"),
         .target(name: "Day3"),
@@ -40,7 +46,7 @@ let package = Package(
         .target(name: "Day5"),
         .target(name: "Day6"),
         .target(name: "Day7"),
-        .target(name: "Day8"),
+        .target(name: "Day8", dependencies: ["AOCAlgorithms"]),
         .target(name: "Day9"),
         .target(name: "Day10"),
         .target(name: "Day11"),
@@ -58,6 +64,7 @@ let package = Package(
         .target(name: "Day23"),
         .target(name: "Day24"),
         .target(name: "Day25"),
+        .testTarget(name: "AOCAlgorithmsTests", dependencies: ["AOCAlgorithms"]),
         .testTarget(name: "Day1Tests", dependencies: ["Day1"]),
         .testTarget(name: "Day2Tests", dependencies: ["Day2"]),
         .testTarget(name: "Day3Tests", dependencies: ["Day3"]),
