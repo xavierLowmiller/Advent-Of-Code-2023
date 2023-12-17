@@ -1,3 +1,5 @@
+import HeapModule
+
 /**
  The A* search algorithm.
  Finds the shortest/cheapest path from `start` to `goal`
@@ -49,7 +51,7 @@ public func aStar<Node: Hashable, S: Sequence<Node>>(
     // The set of discovered nodes that may need to be (re-)expanded.
     // Initially, only the start node is known.
     // This is usually implemented as a min-heap or priority queue rather than a hash-set.
-    var openSet: Set<Node> = [start]
+    var openSet: Heap<HeapEntry<Node>> = [HeapEntry(node: start, score: heuristic(start))]
 
     // For node n, cameFrom[n] is the node immediately preceding it on the cheapest path from start
     // to n currently known.
@@ -64,12 +66,11 @@ public func aStar<Node: Hashable, S: Sequence<Node>>(
 
     while !openSet.isEmpty {
         // This operation can occur in O(1) time if openSet is a min-heap or a priority queue
-        let current = openSet.min { fScore[$0]! < fScore[$1]! }!
+        let current = openSet.removeMin().node
         if goal(current) {
             return cameFrom.reconstructPath(to: current)
         }
 
-        openSet.remove(current)
         for neighbor in neighbors(current) {
             // d(current,neighbor) is the weight of the edge from current to neighbor
             // tentative_gScore is the distance from start to the neighbor through current
@@ -79,12 +80,22 @@ public func aStar<Node: Hashable, S: Sequence<Node>>(
                 // This path to neighbor is better than any previous one. Record it!
                 cameFrom[neighbor] = current
                 gScore[neighbor] = tentativeGScore
-                fScore[neighbor] = tentativeGScore + heuristic(neighbor)
-                openSet.insert(neighbor)
+                let score = tentativeGScore + heuristic(neighbor)
+                fScore[neighbor] = score
+                openSet.insert(HeapEntry(node: neighbor, score: score))
             }
         }
     }
 
     // Open set is empty but goal was never reached
     return nil
+}
+
+private struct HeapEntry<Node>: Comparable where Node: Equatable {
+    let node: Node
+    let score: Int
+
+    static func < (lhs: Self, rhs: Self) -> Bool {
+        lhs.score < rhs.score
+    }
 }
