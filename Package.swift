@@ -59,7 +59,7 @@ let package = Package(
         .target(name: "Day17", dependencies: ["AOCAlgorithms"]),
         .target(name: "Day18"),
         .target(name: "Day19"),
-        .target(name: "Day20"),
+        .target(name: "Day20", dependencies: ["AOCAlgorithms"]),
         .target(name: "Day21"),
         .target(name: "Day22"),
         .target(name: "Day23"),
